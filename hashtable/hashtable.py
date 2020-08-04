@@ -37,7 +37,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
-
+        return self.capacity
 
     def get_load_factor(self):
         """
@@ -46,6 +46,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        pass
 
 
     def fnv1(self, key):
@@ -89,13 +90,52 @@ class HashTable:
         Implement this.
         """
         # Your code here
-        # Create a new hash entry 
-        new_entry = HashTableEntry(key, value)
-        # hash the entry using the hash_index method
-        new_entries_index = self.hash_index(key)
-        # create the value for the newly created index
-        self.contents[new_entries_index] = new_entry
+        # Find the index of the key
+        entry_index = self.hash_index(key)
+        current_entry = self.contents[entry_index]
+        # Check to see if there is already an entry at that key (we'll know if there isn't because it will be "None"). And if there isn't, then I just create a new entry as the head, increment the size, and set its "next" pointer to be "None"
+        if self.contents[entry_index] is None:
+            new_entry = HashTableEntry(key, value)
+            self.contents[entry_index] = new_entry
+            self.size += 1
+        # Otherwise, there is an entry there and I need to determine if the key is already in the linked list or not, which is where the while-loop comes in
+        while current_entry:
+            # While iterating through the list, if I come across a node that is the same as the key, then I need to update that node's value
+            if current_entry.key == key:
+                current_entry.value = value
+            # continue itterating through the list
+            old_head = current_entry
+            new_entry = HashTableEntry(key, value)
+            self.contents[entry_index] = new_entry
+            new_entry.next = old_head
+            # Otherwise create a new entry with the key/value input as the new head
+            self.size += 1
+            current_entry = current_entry.next
+ 
+    def get(self, key):
+        """    
+        Retrieve the value stored with the given key.
 
+        Returns None if the key is not found.
+
+        Implement this.
+        """
+        # Your code here
+        # Keep track of the entries index as well as the current node I'm looking at 
+        entry_index = self.hash_index(key)
+        current_entry = self.contents[entry_index]
+        # print(current_entry.value, ';aosidjf;oijao;sdjf')
+        # Edge case: If there is nothing in this hash table, then return None
+        if self.size == 0:
+            return None
+        # If the current entry is None, then just return "None" (because there is nothing there, so I don't need to continue iterating)
+        if current_entry is None:
+            return None
+        # while there is a current entry, check to see if the key matches the key entered. If it does, then return that, otherwise increment the current entry
+        while current_entry:
+            if current_entry.key == key:
+                return current_entry.value
+            current_entry = current_entry.next
 
     def delete(self, key):
         """
@@ -115,26 +155,6 @@ class HashTable:
         # Return the value that was just deleted 
         return to_delete
 
-
-    def get(self, key):
-        """
-        Retrieve the value stored with the given key.
-
-        Returns None if the key is not found.
-
-        Implement this.
-        """
-        # Your code here
-        # Hash the key to find the correct index
-        key_index = self.hash_index(key)
-        # If the value for this key is None, then there is nothing to manipulate, so None is returned
-        if self.contents[key_index] is None:
-            return None
-        # Otherwise return the value stored at that key
-        else: 
-            return self.contents[key_index].value
-
-
     def resize(self, new_capacity):
         """
         Changes the capacity of the hash table and
@@ -143,7 +163,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
-
+        pass
 
 
 if __name__ == "__main__":
