@@ -146,14 +146,29 @@ class HashTable:
         Implement this.
         """
         # Your code here
-        # hash the key to find the correct index
-        index_of_key = self.hash_index(key)
-        # Store the value to be deleted (for good feedback)
-        to_delete = self.contents[index_of_key]
-        # remove the value from this key's entry
-        self.contents[index_of_key] = None
-        # Return the value that was just deleted 
-        return to_delete
+        # Find the index of the key, and keep track of the current node
+        entry_index = self.hash_index(key)
+        current_entry = self.contents[entry_index]
+        # If the value at this index is None, then there is nothing to delete. So exit the function
+        if current_entry is None:
+            return f"there is no entry there"
+        # If head of the linked list is this key, then update the value to be where the current head's "next" is pointing towards
+        if current_entry.key == key:
+            self.contents[entry_index] = self.contents[entry_index].next
+            self.size -= 1
+            return key
+        # Otherwise I need to iterate over the linked list to see if the entry is in there
+        else:
+            previous_entry = None
+            while current_entry:
+                if current_entry.key == key:
+                    previous_entry.next = current_entry.next
+                    self.size -= 1
+                    return key
+                previous_entry = current_entry
+                current_entry = current_entry.next
+
+
 
     def resize(self, new_capacity):
         """
