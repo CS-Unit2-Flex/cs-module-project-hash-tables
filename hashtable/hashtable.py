@@ -125,6 +125,7 @@ class HashTable:
         # Check to see if there is already an entry at that key (we'll know if there isn't because it will be "None"). And if there isn't, then I just create a new entry as the head, increment the size, and set its "next" pointer to be "None"
         if self.get_load_factor() > 0.7:
             self.resize(self.capacity*2)
+
         if self.contents[entry_index] is None:
             new_entry = HashTableEntry(key, value)
             self.contents[entry_index] = new_entry
@@ -181,6 +182,8 @@ class HashTable:
         entry_index = self.hash_index(key)
         # If the value at this index is None, then there is nothing to delete. So exit the function
         current_entry = self.contents[entry_index]
+        
+
         if current_entry is None:
             return f"there is no entry there"
         # If head of the linked list is this key, then update the value to be where the current head's "next" is pointing towards
@@ -198,6 +201,9 @@ class HashTable:
                     return key
                 previous_entry = current_entry
                 current_entry = current_entry.next
+                
+        if (self.get_load_factor() < 0.2) and (self.capacity > MIN_CAPACITY):
+            self.resize(self.capacity//2)
 
 
 
