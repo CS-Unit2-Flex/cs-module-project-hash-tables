@@ -46,7 +46,36 @@ class HashTable:
         Implement this.
         """
         # Your code here
-        pass
+        return self.size/self.capacity
+
+    def resize(self, new_capacity):
+        """
+        Changes the capacity of the hash table and
+        rehashes all key/value pairs.
+
+        Implement this.
+        """
+        # Your code here
+        # increase capacity
+        self.capacity = new_capacity 
+        # Store the old table
+        old_contents = [None] * self.capacity
+        # increase capacity and include the old table
+        self.contents = self.contents + old_contents
+        # re-hash all entries in the contents list 
+        for i in range(0,self.capacity):
+            current_entry = self.contents[i]
+            # If the value of the current entry is None, then I don't need to do anything
+            if current_entry is None:
+                continue
+            # otherwise I need to create a current linked-list variable for traversal
+            else:
+                linked_list_entry = self.contents[i]
+            # While there is a current linked-list variable, I need to dedete it and re-hash it by running the "put" method on that variable's key and value
+            while linked_list_entry:
+                self.delete(self.contents[i].key)
+                self.put(linked_list_entry.key, linked_list_entry.value)
+                linked_list_entry = linked_list_entry.next
 
 
     def fnv1(self, key):
@@ -94,6 +123,8 @@ class HashTable:
         entry_index = self.hash_index(key)
         current_entry = self.contents[entry_index]
         # Check to see if there is already an entry at that key (we'll know if there isn't because it will be "None"). And if there isn't, then I just create a new entry as the head, increment the size, and set its "next" pointer to be "None"
+        if self.get_load_factor() > 0.7:
+            self.resize(self.capacity*2)
         if self.contents[entry_index] is None:
             new_entry = HashTableEntry(key, value)
             self.contents[entry_index] = new_entry
@@ -148,8 +179,8 @@ class HashTable:
         # Your code here
         # Find the index of the key, and keep track of the current node
         entry_index = self.hash_index(key)
-        current_entry = self.contents[entry_index]
         # If the value at this index is None, then there is nothing to delete. So exit the function
+        current_entry = self.contents[entry_index]
         if current_entry is None:
             return f"there is no entry there"
         # If head of the linked list is this key, then update the value to be where the current head's "next" is pointing towards
@@ -170,15 +201,7 @@ class HashTable:
 
 
 
-    def resize(self, new_capacity):
-        """
-        Changes the capacity of the hash table and
-        rehashes all key/value pairs.
 
-        Implement this.
-        """
-        # Your code here
-        pass
 
 
 if __name__ == "__main__":
